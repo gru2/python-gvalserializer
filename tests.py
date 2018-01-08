@@ -32,6 +32,8 @@ class TestFileBinaryStream(unittest.TestCase):
 class TestGValSerializer(unittest.TestCase):
 
     def testGValSerializer(self):
+        a0 = np.array([1.0, 2.5, -4.25])
+        a1 = np.array([[1.0, 2.5, 1.5], [2.0, 3.0, -5.5]], dtype=np.float32)
         fbs = gvalserializer.FileBinaryStream()
         fbs.open("pera.bin", "wb")
         gvs = gvalserializer.GValSerializer()
@@ -44,8 +46,8 @@ class TestGValSerializer(unittest.TestCase):
         gvs.write("foobar")
         gvs.write([100, 301, "Pera"])
         gvs.write({"foo": 4, "bar": "baz"})
-        gvs.write(np.array([1.0, 2.5, -4.25]))
-        gvs.write(np.array([[1.0, 2.5, 1.5], [2.0, 3.0, -5.5]], dtype=np.float32))
+        gvs.write(a0)
+        gvs.write(a1)
         fbs.close()
         fbs.open("pera.bin", "rb")
         self.assertEqual(gvs.read(), None)
@@ -56,10 +58,8 @@ class TestGValSerializer(unittest.TestCase):
         self.assertEqual(gvs.read(), "foobar")
         self.assertEqual(gvs.read(), [100, 301, "Pera"])
         self.assertEqual(gvs.read(), {"foo": 4, "bar": "baz"})
-        t = gvs.read()
-        print("t = ", t)
-        self.assertTrue(np.array_equal(t, np.array([1.0, 2.5, -4.25])))
-        self.assertTrue(np.array_equal(gvs.read(), np.array([[1.0, 2.5, 1.5], [2.0, 3.0, -5.5]], dtype=np.float32)))
+        self.assertTrue(np.array_equal(gvs.read(), a0))
+        self.assertTrue(np.array_equal(gvs.read(), a1))
         fbs.close()
 
 

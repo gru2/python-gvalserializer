@@ -109,6 +109,7 @@ class GValSerializer:
                 self.write(x[k])
             return
         if type(x) == np.ndarray:
+            self.binaryStream.writeInt(GVT_MULTI_ARRAY)
             nDims = len(x.shape)
             nElems = x.size
             xt = x.reshape(nElems)
@@ -153,21 +154,16 @@ class GValSerializer:
         if t == GVT_STRING:
             return self.binaryStream.readString()
         if t == GVT_MULTI_ARRAY:
-            print("GVT_MULTI_ARRAY")
             et = self.binaryStream.readInt()
-            print("et = ", et)
             nDims = self.binaryStream.readInt()
-            print("nDims = ", nDims)
             if et == GVT_GENERIC:
                 if nDims != 1:
                     self.error("unable to load multidimensional Generic.")
                     return None
                 nElems = self.binaryStream.readInt()
-                print("nElems = ", nElems)
                 x = []
                 for i in range(nElems):
                     x.append(self.read())
-                print("x = ", x)
                 return x
             shape = []
             for i in range(nDims):
