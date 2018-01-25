@@ -39,7 +39,7 @@ class FileBinaryStream:
         return self._read("<d")
 
     def readString(self):
-        len = self.readInt()
+        len = self.readLong()
         return self.file.read(len).decode("ascii")
 
     def writeByte(self, x):
@@ -58,7 +58,7 @@ class FileBinaryStream:
         self._write("<d", x)
 
     def writeString(self, x):
-        self.writeInt(len(x))
+        self.writeLong(len(x))
         self.file.write(x.encode("ascii"))
 
 
