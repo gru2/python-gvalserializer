@@ -29,6 +29,9 @@ class FileBinaryStream:
     def readInt(self):
         return self._read("<i")
 
+    def readLong(self):
+        return self._read("<q")
+
     def readFloat(self):
         return self._read("<f")
 
@@ -44,6 +47,9 @@ class FileBinaryStream:
 
     def writeInt(self, x):
         self._write("<i", x)
+
+    def writeLong(self, x):
+        self._write("<q", x)
 
     def writeFloat(self, x):
         self._write("<f", x)
@@ -97,13 +103,13 @@ class GValSerializer:
             self.binaryStream.writeInt(GVT_MULTI_ARRAY)
             self.binaryStream.writeInt(GVT_GENERIC)
             self.binaryStream.writeInt(1)
-            self.binaryStream.writeInt(len(x))
+            self.binaryStream.writeLong(len(x))
             for y in x:
                 self.write(y)
             return
         if type(x) is dict:
             self.binaryStream.writeInt(GVT_MAP)
-            self.binaryStream.writeInt(len(x))
+            self.binaryStream.writeLong(len(x))
             for k in x:
                 self.write(k)
                 self.write(x[k])
@@ -117,7 +123,7 @@ class GValSerializer:
                 self.binaryStream.writeInt(GVT_DOUBLE)
                 self.binaryStream.writeInt(nDims)
                 for dim in x.shape:
-                    self.binaryStream.writeInt(dim)
+                    self.binaryStream.writeLong(dim)
                 for i in range(nElems):
                     self.binaryStream.writeDouble(xt[i])
                 return
@@ -125,7 +131,7 @@ class GValSerializer:
                 self.binaryStream.writeInt(GVT_FLOAT)
                 self.binaryStream.writeInt(nDims)
                 for dim in x.shape:
-                    self.binaryStream.writeInt(dim)
+                    self.binaryStream.writeLong(dim)
                 for i in range(nElems):
                     self.binaryStream.writeFloat(xt[i])
                 return
@@ -133,7 +139,7 @@ class GValSerializer:
                 self.binaryStream.writeInt(GVT_INT)
                 self.binaryStream.writeInt(nDims)
                 for dim in x.shape:
-                    self.binaryStream.writeInt(dim)
+                    self.binaryStream.writeLong(dim)
                 for i in range(nElems):
                     self.binaryStream.writeInt(xt[i])
                 return
@@ -160,14 +166,14 @@ class GValSerializer:
                 if nDims != 1:
                     self.error("unable to load multidimensional Generic.")
                     return None
-                nElems = self.binaryStream.readInt()
+                nElems = self.binaryStream.readLong()
                 x = []
                 for i in range(nElems):
                     x.append(self.read())
                 return x
             shape = []
             for i in range(nDims):
-                shape.append(self.binaryStream.readInt())
+                shape.append(self.binaryStream.readLong())
             nElems = 1
             for i in shape:
                 nElems *= i
@@ -189,7 +195,7 @@ class GValSerializer:
             self.error("unable to read multiarray")
             return None
         if t == GVT_MAP:
-            nElems = self.binaryStream.readInt()
+            nElems = self.binaryStream.readLong()
             x = {}
             for i in range(nElems):
                 k = self.read()
