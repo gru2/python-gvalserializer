@@ -63,5 +63,15 @@ class TestGValSerializer(unittest.TestCase):
         fbs.close()
 
 
+class TestGValReadWrite(unittest.TestCase):
+
+    def test1(self):
+        x = {"foo": 4, "bar": "baz", "list": [1, 2, "pera"]}
+        path = "mika.bin"
+        gvalserializer.writeToBinaryFile(path, x)
+        y = gvalserializer.readFromBinaryFile(path)
+        self.assertEqual(x, y)
+
+
 if __name__ == '__main__':
     unittest.main()

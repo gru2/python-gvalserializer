@@ -208,3 +208,20 @@ class GValSerializer:
     def error(self, msg):
         print("error:", msg)
         exit(1)
+
+def readFromBinaryFile(path):
+    fbs = FileBinaryStream()
+    fbs.open(path, "rb")
+    s = GValSerializer()
+    s.binaryStream = fbs
+    gv = s.read()
+    fbs.close()
+    return gv
+
+def writeToBinaryFile(path, x):
+    fbs = FileBinaryStream()
+    fbs.open(path, "wb")
+    s = GValSerializer()
+    s.binaryStream = fbs
+    s.write(x)
+    fbs.close()
